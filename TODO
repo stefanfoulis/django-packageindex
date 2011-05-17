@@ -1,0 +1,24 @@
+Roadmap
+=======
+
+0.5
+---
+
+* Ratings/comments views/admin
+* PKG-INFO view of a release (auto generated from package_info field)
+
+Future
+------
+
+* Documentation hosting/upload
+* PEP-381: Mirroring integration for PyPI
+* API to submit test reports for smoke test bots. Like CPAN Testers.
+  Platform/version/matrix etc.
+* Dependency graphs
+* Package file browser (like CPAN)
+
+Documentation
+-------------
+
+* Write a tutorial on how to set up the server, registering projects, and
+  how to upload releases.

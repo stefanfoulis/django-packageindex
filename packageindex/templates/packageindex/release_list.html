@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<title>Package Index Releases</title>
+	</head>
+	<body>
+		<table>
+			<thead>
+				<th>Updated</th><th>Package</th><th>Description</th>
+			</thead>
+			<tbody>
+			{% for release in release_list %}
+    			<tr>
+			        <td>{{ release.created|date:"Y-m-d" }}
+			        <td><a href="{{ release.get_absolute_url }}"/>{{ release }}</a></td>
+			        <td>{{ release.summary|truncatewords:10 }}</td>
+			    </tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</body>
+</html>
