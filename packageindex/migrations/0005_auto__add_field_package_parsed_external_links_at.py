@@ -8,26 +8,14 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Changing field 'Distribution.comment'
-        db.alter_column('packageindex_distribution', 'comment', self.gf('django.db.models.fields.TextField')())
-
-        # Changing field 'Distribution.url'
-        db.alter_column('packageindex_distribution', 'url', self.gf('django.db.models.fields.URLField')(max_length=255, null=True))
-
-        # Changing field 'Distribution.file'
-        db.alter_column('packageindex_distribution', 'file', self.gf('django.db.models.fields.files.FileField')(max_length=255, null=True))
+        # Adding field 'Package.parsed_external_links_at'
+        db.add_column('packageindex_package', 'parsed_external_links_at', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True), keep_default=False)
 
 
     def backwards(self, orm):
         
-        # Changing field 'Distribution.comment'
-        db.alter_column('packageindex_distribution', 'comment', self.gf('django.db.models.fields.CharField')(max_length=255))
-
-        # Changing field 'Distribution.url'
-        db.alter_column('packageindex_distribution', 'url', self.gf('django.db.models.fields.URLField')(max_length=200, null=True))
-
-        # Changing field 'Distribution.file'
-        db.alter_column('packageindex_distribution', 'file', self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True))
+        # Deleting field 'Package.parsed_external_links_at'
+        db.delete_column('packageindex_package', 'parsed_external_links_at')
 
 
     models = {
@@ -43,6 +31,7 @@ class Migration(SchemaMigration):
             'filename': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
             'filetype': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_from_external': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'md5_digest': ('django.db.models.fields.CharField', [], {'max_length': '32', 'blank': 'True'}),
             'mirrored_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'pyversion': ('django.db.models.fields.CharField', [], {'max_length': '16', 'blank': 'True'}),
@@ -56,13 +45,25 @@ class Migration(SchemaMigration):
         'packageindex.package': {
             'Meta': {'ordering': "['name']", 'object_name': 'Package'},
             'auto_hide': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255', 'primary_key': 'True'})
+            'index': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['packageindex.PackageIndex']"}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255', 'primary_key': 'True'}),
+            'parsed_external_links_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'updated_from_remote_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'})
+        },
+        'packageindex.packageindex': {
+            'Meta': {'object_name': 'PackageIndex'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'simple_url': ('django.db.models.fields.URLField', [], {'default': "'http://pypi.python.org/simple'", 'max_length': '200', 'blank': 'True'}),
+            'slug': ('django.db.models.fields.CharField', [], {'default': "'pypi'", 'unique': 'True', 'max_length': '255'}),
+            'updated_from_remote_at': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'xml_rpc_url': ('django.db.models.fields.URLField', [], {'default': "'http://pypi.python.org/pypi'", 'max_length': '200', 'blank': 'True'})
         },
         'packageindex.release': {
             'Meta': {'ordering': "['-created']", 'unique_together': "(('package', 'version'),)", 'object_name': 'Release'},
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'hidden': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_from_external': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'metadata_version': ('django.db.models.fields.CharField', [], {'default': "'1.0'", 'max_length': '64'}),
             'package': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'releases'", 'to': "orm['packageindex.Package']"}),
             'package_info': ('packageindex.models.PackageInfoField', [], {}),

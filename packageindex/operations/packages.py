@@ -22,23 +22,20 @@ def get_package(package, create=False):
                 package = None
     return package
 
+
 def update_package_list(url=None):
     client = xmlrpclib.ServerProxy(PYPI_API_URL)
     for package_name in client.list_packages():
         package, created = Package.objects.get_or_create(name=package_name)
         print package, created
-#    pprint.pprint(client.list_packages())
-#    pprint.pprint(client.package_releases('django-filer'))
-#    pprint.pprint(client.package_urls('django-filer', '0.8.1'))
-#    
-#    pprint.pprint(client.package_releases('paramiko'))
-#    pprint.pprint(client.package_urls('paramiko', '1.7.6'))
+
 
 def update_packages(package_names=None):
     package_names = package_names or []
     for package_name in package_names:
         update_package(package_name)
 
+        
 def update_package(package, create=False, update_releases=True, 
                    update_distributions=True, mirror_distributions=False):
     package = get_package(package, create=create)
@@ -50,6 +47,7 @@ def update_package(package, create=False, update_releases=True,
                             package, release, 
                             update_distributions=update_distributions, 
                             mirror_distributions=mirror_distributions)
+
 
 def create_or_update_release(package, release, 
                              update_distributions=False, 
