@@ -24,7 +24,7 @@ class PackageReleaseInline(admin.TabularInline):
     readonly_fields = ('version', 'metadata_version', 'hidden',)
 
 class PackageAdmin(admin.ModelAdmin):
-    list_display = ('__unicode__',)
+    list_display = ('__unicode__', 'updated_from_remote_at', 'parsed_external_links_at',)
     search_fields = ('name',)
     inlines = (PackageReleaseInline,)
     actions = ('update_release_metadata', 'update_external_release_metadata',)
