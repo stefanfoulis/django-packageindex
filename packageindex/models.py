@@ -390,8 +390,8 @@ class Distribution(models.Model):
                                 content=urllib2.urlopen(self.url).read())
                 self.mirrored_at = datetime.datetime.now()
                 needs_save = True
-            except urllib2.HTTPError, e:
-                print "      failed! %s" % e
+            except (urllib2.HTTPError, urllib2.URLError, ValueError), e:
+                print u"      failed! %s (%s)" % (e, type(e),)
                 
         if needs_save and commit:
             self.save()
